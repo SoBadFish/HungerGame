@@ -219,7 +219,7 @@ public class HungerGameAdminCommand extends Command {
             case "float":
                 if(strings.length < 4){
 
-                    commandSender.sendMessage("指令参数错误 执行/gda help 查看帮助");
+                    commandSender.sendMessage("指令参数错误 执行/hga help 查看帮助");
                     return false;
                 }
                 if(commandSender instanceof Player) {
@@ -238,7 +238,7 @@ public class HungerGameAdminCommand extends Command {
 
                     }else{
                         if(strings.length < 5){
-                            commandSender.sendMessage("指令参数错误 执行/gda help 查看帮助");
+                            commandSender.sendMessage("指令参数错误 执行/hga help 查看帮助");
                             return false;
                         }
                         if(roomConfig.notHasFloatText(strings[3])){

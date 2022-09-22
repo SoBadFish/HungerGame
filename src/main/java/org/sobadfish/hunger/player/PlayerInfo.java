@@ -836,7 +836,7 @@ public class PlayerInfo {
 //        playerType = PlayerType.DEATH;
         damageByInfo = null;
         if(gameRoom != null){
-            if(gameRoom.getRoomConfig().isDeathDrop()){
+            if(gameRoom.getRoomConfig().isDeathgrop()){
                 for(Item item: player.getInventory().getContents().values()){
                     player.level.dropItem(player,item,new Vector3(0,0.5,0));
                 }

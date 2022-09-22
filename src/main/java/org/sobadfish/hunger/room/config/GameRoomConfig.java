@@ -48,7 +48,7 @@ public class GameRoomConfig {
     /**
      * 是否掉落物品
      * */
-    public boolean deathDrop;
+    public boolean deathgrop;
 
     /**
      * 最低人数
@@ -159,8 +159,8 @@ public class GameRoomConfig {
         return maxWaitTime;
     }
 
-    public boolean isDeathDrop() {
-        return deathDrop;
+    public boolean isDeathgrop() {
+        return deathgrop;
     }
 
     public String getName() {
@@ -239,7 +239,7 @@ public class GameRoomConfig {
                 roomConfig.quitRoomCommand = new ArrayList<>(room.getStringList("QuitRoom"));
                 roomConfig.victoryCommand = new ArrayList<>(room.getStringList("victoryCmd"));
                 roomConfig.defeatCommand = new ArrayList<>(room.getStringList("defeatCmd"));
-                roomConfig.deathDrop = room.getBoolean("deathDrop",false);
+                roomConfig.deathgrop = room.getBoolean("deathgrop",false);
                 roomConfig.items = new ArrayList<>(buildItem);
                 roomConfig.round = room.getInt("round",10);
                 List<FloatTextInfoConfig> configs = new ArrayList<>();
@@ -344,7 +344,7 @@ public class GameRoomConfig {
         config.set("hasWatch", hasWatch);
         config.set("AutomaticNextRound",isAutomaticNextRound);
         config.set("defeatCmd",defeatCommand);
-        config.set("deathDrop",deathDrop);
+        config.set("deathgrop",deathgrop);
         config.set("victoryCmd",victoryCommand);
         config.set("round",round);
         config.set("roomStartMessage",gameStartMessage);
