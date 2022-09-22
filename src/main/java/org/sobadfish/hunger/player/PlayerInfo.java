@@ -637,8 +637,8 @@ public class PlayerInfo {
                     player.setImmobile(false);
                     sendTitle("&c开始！", 2);
                     if (!gameRoom.isDeath) {
-                        sendSubTitle("&e您有 20 秒的无敌时间");
-                        noDamage = 20;
+                        sendSubTitle("&e您有 "+gameRoom.roomConfig.noDamage+" 秒的无敌时间");
+                        noDamage = gameRoom.roomConfig.noDamage;
                     }
                 }
             }

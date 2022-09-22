@@ -467,7 +467,7 @@ public class RoomManager implements Listener {
                     return;
                 }
                 if(!playerInfo.hasDamage && playerInfo.noDamage > 0){
-                    playerInfo.sendMessage("&d你被保护着 剩余时间:"+playerInfo.noDamage);
+                    playerInfo.sendMessage("&c你被保护着 剩余时间: &a"+playerInfo.noDamage+" &c秒");
                     event.setCancelled();
                     return;
                 }

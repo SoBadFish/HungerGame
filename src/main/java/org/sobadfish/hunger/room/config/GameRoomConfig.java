@@ -122,6 +122,7 @@ public class GameRoomConfig {
      * */
     public ArrayList<Item> items = new ArrayList<>();
 
+    public int noDamage = 60;
 
 
     private GameRoomConfig(String name,
@@ -239,6 +240,7 @@ public class GameRoomConfig {
                 roomConfig.deathgrop = room.getBoolean("deathgrop",false);
                 roomConfig.items = new ArrayList<>(buildItem);
                 roomConfig.round = room.getInt("round",10);
+                roomConfig.noDamage = room.getInt("noDamage",60);
                 List<FloatTextInfoConfig> configs = new ArrayList<>();
                 if(room.exists("floatSpawnPos")){
                     for(Map<?,?> map: room.getMapList("floatSpawnPos")){
@@ -343,6 +345,7 @@ public class GameRoomConfig {
         config.set("deathgrop",deathgrop);
         config.set("victoryCmd",victoryCommand);
         config.set("round",round);
+        config.set("noDamage",noDamage);
         config.set("roomStartMessage",gameStartMessage);
         List<Map<String,Object>> pos = new ArrayList<>();
         for(FloatTextInfoConfig floatTextInfoConfig: floatTextInfoConfigs){

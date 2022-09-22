@@ -16,6 +16,8 @@ victoryCmd: []
 defeatCmd: []
 # 生成物品的概率
 round: 20
+# 无敌时间
+noDamage: 60
 
 floatSpawnPos: []
 
