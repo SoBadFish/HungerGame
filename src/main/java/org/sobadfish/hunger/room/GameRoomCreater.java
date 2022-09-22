@@ -37,7 +37,7 @@ public class GameRoomCreater {
 
 
     //队伍出生点数量
-    private int spawnSize = 1;
+    private int spawnSize = 4;
 
     private GameRoomConfig roomConfig;
 
