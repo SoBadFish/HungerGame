@@ -1,0 +1,10 @@
+team:
+  - name: "幸存者"
+    nameColor: "&c"
+    blockWoolColor: "35:14"
+    canPvp: true
+    inventory: {}
+    rgb:
+      r: 255
+      g: 0
+      b: 0

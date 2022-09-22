@@ -1,0 +1,30 @@
+world: ""
+gameTime: 1200
+callbackY: 17
+deathDrop: true
+hasWatch: true
+waitTime: 120
+max-player-waitTime: 20
+minPlayerSize: 4
+maxPlayerSize: 16
+teamSpawn: {}
+waitPosition: ""
+ban-command: []
+QuitRoom: []
+AutomaticNextRound: true
+victoryCmd: []
+defeatCmd: []
+# 生成物品的概率
+round: 5
+
+floatSpawnPos: []
+
+roomStartMessage:
+  - "&a■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"
+  - "&f饥饿游戏"
+  - "&e"
+  - "&e收集物资，击杀玩家，获得最终的胜利"
+  - "&e"
+  - "&a■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"
+
+
