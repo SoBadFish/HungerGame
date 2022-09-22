@@ -613,8 +613,11 @@ public class GameRoom {
                     info = playerInfo;
                     heath = playerInfo.getPlayer().getHealth();
                 }
+                successInfo.outPlayers.add(info);
             }
+
             if(info != null) {
+                successInfo.outPlayers.remove(info);
                 gameEnd(info);
             }
 
