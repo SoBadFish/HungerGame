@@ -208,6 +208,9 @@ public class GameRoomConfig {
                     TotalManager.sendMessageToConsole("&a成功清除未完成的房间模板");
                     return null;
                 }
+                if(!new File(file+"/items.yml").exists()){
+                    TotalManager.saveResource("items.yml","/rooms/"+name+"/items.yml",false);
+                }
                 Config item = new Config(file + "/items.yml", Config.YAML);
                 List<String> strings = item.getStringList("items");
                 List<Item> buildItem = buildItem(strings);
@@ -375,6 +378,7 @@ public class GameRoomConfig {
     public static GameRoomConfig createGameRoom(String name,int size,int maxSize){
         GameRoomConfig roomConfig = new GameRoomConfig(name,null,300,120,20,size,maxSize,new ArrayList<>());
         TotalManager.saveResource("team.yml","/rooms/"+name+"/team.yml",false);
+        TotalManager.saveResource("items.yml","/rooms/"+name+"/items.yml",false);
         loadTeamConfig(roomConfig);
         return roomConfig;
 
