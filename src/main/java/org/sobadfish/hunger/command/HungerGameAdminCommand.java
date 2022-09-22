@@ -31,7 +31,7 @@ import java.util.LinkedHashMap;
 public class HungerGameAdminCommand extends Command {
     public HungerGameAdminCommand(String name) {
         super(name);
-        this.usageMessage = "/gda help 查看指令帮助";
+        this.usageMessage = "/hga help 查看指令帮助";
         this.setPermission("op");
     }
 
@@ -124,7 +124,7 @@ public class HungerGameAdminCommand extends Command {
                         return false;
                     }
                 }else{
-                    commandSender.sendMessage(TextFormat.colorize('&',"/gda set [内容] &e首次创建为房间名称"));
+                    commandSender.sendMessage(TextFormat.colorize('&',"/hga set [内容] &e首次创建为房间名称"));
                     return false;
                 }
             case "end":
@@ -139,7 +139,7 @@ public class HungerGameAdminCommand extends Command {
                 break;
             case "exp":
                 if(strings.length < 3){
-                    commandSender.sendMessage("指令参数错误 执行/gda help 查看帮助");
+                    commandSender.sendMessage("指令参数错误 执行/hga help 查看帮助");
                     return false;
                 }
                 String playerName = strings[1];
@@ -168,7 +168,7 @@ public class HungerGameAdminCommand extends Command {
             case "top":
                 if(commandSender instanceof Player) {
                     if (strings.length < 3) {
-                        commandSender.sendMessage("指令参数错误 执行/gda help 查看帮助");
+                        commandSender.sendMessage("指令参数错误 执行/hga help 查看帮助");
                         return false;
                     }
                     String name = strings[2];
@@ -176,7 +176,7 @@ public class HungerGameAdminCommand extends Command {
 
                     if ("add".equalsIgnoreCase(strings[1])) {
                         if(strings.length < 4){
-                            commandSender.sendMessage("指令参数错误 执行/gda help 查看帮助");
+                            commandSender.sendMessage("指令参数错误 执行/hga help 查看帮助");
                             return false;
                         }
                         PlayerData.DataType type = PlayerData.DataType.byName(strings[3]);
