@@ -139,8 +139,10 @@ public class PlayerInfo {
 
     public void setTeamInfo(TeamInfo teamInfo) {
         this.teamInfo = teamInfo;
-        this.armor = teamInfo.getTeamConfig().getTeamConfig().getInventoryArmor();
-        this.inventoryItem = teamInfo.getTeamConfig().getTeamConfig().getInventoryItem();
+        if(teamInfo != null) {
+            this.armor = teamInfo.getTeamConfig().getTeamConfig().getInventoryArmor();
+            this.inventoryItem = teamInfo.getTeamConfig().getTeamConfig().getInventoryItem();
+        }
     }
 
     /**
@@ -591,7 +593,7 @@ public class PlayerInfo {
 
             lore.add("游戏结束: &a"+formatTime(getGameRoom().loadTime));
             for(TeamInfo teamInfo: gameRoom.getTeamInfos()){
-                lore.add(teamInfo.getTeamConfig().getName()+": &r"+teamInfo.getLivePlayer().size()+" /"+teamInfo.getTeamPlayers().size());
+                lore.add(teamInfo.getTeamConfig().getName()+": &e"+teamInfo.getLivePlayer().size()+" &7/&a "+teamInfo.getTeamPlayers().size());
             }
             lore.add("      ");
             lore.add("&b击杀数: &a"+killCount);
@@ -613,7 +615,7 @@ public class PlayerInfo {
 
     private boolean isSendkey = false;
 
-    private int noDamage = 0;
+    public int noDamage = -1;
 
     public boolean hasDamage = false;
 
@@ -622,30 +624,40 @@ public class PlayerInfo {
      * */
     public void onUpdate(){
         //TODO 玩家进入房间后每秒就会调用这个方法
-        if(waitTIme > 0){
-            if(!player.isImmobile()){
-                player.setImmobile(true);
+        if(playerType == PlayerType.START) {
+            if (waitTIme > 0) {
+                if (!player.isImmobile()) {
+                    player.setImmobile(true);
+                }
+                sendTitle("", waitTIme);
+                sendSubTitle("&e" + waitTIme + " &6秒后开始,请做好准备");
+                waitTIme--;
+            } else {
+                if (player.isImmobile()) {
+                    player.setImmobile(false);
+                    sendTitle("&c开始！", 2);
+                    if (!gameRoom.isDeath) {
+                        sendSubTitle("&e您有 20 秒的无敌时间");
+                        noDamage = 20;
+                    }
+                }
             }
-            sendTitle("",waitTIme);
-            sendSubTitle("&e"+waitTIme+" &6秒后开始,请做好准备");
-            waitTIme--;
-        }else{
-            if(player.isImmobile()){
-                player.setImmobile(false);
-                sendTitle("&c开始！",2);
-                sendSubTitle("&e您有 20 秒的无敌时间");
-                noDamage = 20;
+            if (waitTIme == 0) {
+                if (noDamage > 0) {
+                    noDamage--;
+
+                } else {
+                    if (noDamage != -1) {
+                        if (!hasDamage) {
+                            sendTitle("", 2);
+                            sendSubTitle("&c无敌时间结束");
+                            hasDamage = true;
+                        }
+                    }
+                }
             }
         }
-        if(noDamage > 0){
-            noDamage--;
-        }else {
-            if (!hasDamage) {
-                sendTitle("",2);
-                sendSubTitle("&c无敌时间结束");
-            }
-        }
-        if(!isWatch()) {
+        if (!isWatch()) {
             if (getPlayer().getInventory().getItemInHand().getId() == 345) {
                 //拿着指南针
                 for (PlayerInfo info : gameRoom.getLivePlayers()) {
@@ -654,7 +666,7 @@ public class PlayerInfo {
                     }
                     double dis = info.getPlayer().distance(this.player);
                     if (dis < 20) {
-                        sendActionBar(info+"在你附近 》"+dis+" 米 《");
+                        sendActionBar(info + "在你附近 》" + dis + " 米 《");
                     }
                 }
             }
@@ -676,30 +688,7 @@ public class PlayerInfo {
         }
 
         //死亡倒计时
-        if(playerType == PlayerType.DEATH){
-            if(gameRoom != null){
-                if(gameRoom.roomConfig.reSpawnTime > 0){
-                    if(spawnTime >= gameRoom.roomConfig.reSpawnTime){
-                        sendTitle("&a你复活了",1);
-                        sendSubTitle("");
-                        spawn();
-                        spawnTime = 0;
-                    }else{
-                        if(spawnTime == 0 && !isSendkey){
-                            isSendkey = true;
-                            sendTitle("&c你死了", gameRoom.roomConfig.reSpawnTime);
-                        }
-                        if(gameRoom != null) {
-                            sendSubTitle((gameRoom.roomConfig.reSpawnTime - spawnTime) + " 秒后复活");
-                        }
-                        spawnTime++;
-                    }
-                }else{
-                    playerType = PlayerType.START;
-                }
 
-            }
-        }
 
         //TODO 玩家更新线程
         if(playerType == PlayerType.START){
@@ -764,20 +753,9 @@ public class PlayerInfo {
         if(getGameRoom().getWorldInfo().getConfig().getGameWorld() == null){
             return;
         }
-        if(gameRoom != null && gameRoom.roomConfig.reSpawnTime > 0) {
-            if (getPlayer() instanceof Player) {
-                ((Player) getPlayer()).setGamemode(3);
-            }
-            player.teleport(getGameRoom().worldInfo.getConfig().getGameWorld().getSafeSpawn());
-            Position position = teamInfo.getSpawnLocation();
-            player.teleport(new Position(player.x, position.y + 64, player.z, getLevel()));
-            sendTitle("&c你死了",2);
-            playerType = PlayerType.DEATH;
-        }else{
-            playerType = PlayerType.WATCH;
-            if (getPlayer() instanceof Player) {
-                ((Player) getPlayer()).setGamemode(3);
-            }
+        playerType = PlayerType.WATCH;
+        if (getPlayer() instanceof Player) {
+            ((Player) getPlayer()).setGamemode(3);
         }
 
         if(getGameRoom().getWorldInfo().getConfig().getGameWorld() == null){

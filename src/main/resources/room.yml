@@ -15,7 +15,7 @@ AutomaticNextRound: true
 victoryCmd: []
 defeatCmd: []
 # 生成物品的概率
-round: 5
+round: 20
 
 floatSpawnPos: []
 

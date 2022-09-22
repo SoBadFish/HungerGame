@@ -37,10 +37,7 @@ public class GameRoomConfig {
      * 等待时长
      * */
     public int waitTime;
-    /**
-     * 复活时长
-     * */
-    public int reSpawnTime = 0;
+
     /**
      * 满人等待时长
      * */
@@ -62,7 +59,7 @@ public class GameRoomConfig {
     /**
      * 概率
      * */
-    private int round;
+    private int round = 10;
 
 
     //自动进入下一局
@@ -233,7 +230,7 @@ public class GameRoomConfig {
                 }
                 GameRoomConfig roomConfig = new GameRoomConfig(name,worldInfoConfig,time,waitTime,maxWaitTime,minPlayerSize,maxPlayerSize,teamInfoConfigs);
                 roomConfig.hasWatch = room.getBoolean("hasWatch",true);
-                roomConfig.reSpawnTime = room.getInt("reSpawnTime",0);
+
                 roomConfig.banCommand = new ArrayList<>(room.getStringList("ban-command"));
                 roomConfig.isAutomaticNextRound = room.getBoolean("AutomaticNextRound",true);
                 roomConfig.quitRoomCommand = new ArrayList<>(room.getStringList("QuitRoom"));
@@ -328,7 +325,6 @@ public class GameRoomConfig {
 
         config.set("callbackY",callbackY);
         config.set("waitTime",waitTime);
-        config.set("reSpawnTime",reSpawnTime);
         config.set("max-player-waitTime",maxWaitTime);
         config.set("minPlayerSize",minPlayerSize);
         config.set("maxPlayerSize",maxPlayerSize);

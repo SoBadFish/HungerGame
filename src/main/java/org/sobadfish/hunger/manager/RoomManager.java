@@ -466,7 +466,8 @@ public class RoomManager implements Listener {
                 if(room == null){
                     return;
                 }
-                if(!playerInfo.hasDamage){
+                if(!playerInfo.hasDamage && playerInfo.noDamage > 0){
+                    playerInfo.sendMessage("&d你被保护着 剩余时间:"+playerInfo.noDamage);
                     event.setCancelled();
                     return;
                 }
@@ -516,15 +517,7 @@ public class RoomManager implements Listener {
                                 return;
                             }
                             ///////////////// 阻止队伍PVP///////////////
-                            //TODO 阻止队伍PVP
-                            TeamInfo t1 = playerInfo.getTeamInfo();
-                            TeamInfo t2 = damageInfo.getTeamInfo();
-                            if (t1 != null && t2 != null) {
-                                if (t1.getTeamConfig().getName().equalsIgnoreCase(t2.getTeamConfig().getName())) {
-                                    event.setCancelled();
-                                    return;
-                                }
-                            }
+
                             ///////////////// 阻止队伍PVP///////////////
                             playerInfo.setDamageByInfo(damageInfo);
                         } else {
@@ -601,20 +594,29 @@ public class RoomManager implements Listener {
 
                     }
                     Block block = event.getBlock();
-                    if(block instanceof BlockChest){
-                        BlockEntity entityChest = block.level.getBlockEntity(block);
-                        if(entityChest instanceof BlockEntityChest){
-                            LinkedHashMap<Integer,Item> items = room.getRandomItem(((BlockEntityChest) entityChest).getSize(),block);
-                            if(items.size() > 0){
-                                //开箱
-                                ((BlockEntityChest) entityChest).getInventory().setContents(items);
-                            }
 
+                    if(room.getType() == GameType.START) {
+                        if (block instanceof BlockChest) {
+
+                            BlockEntity entityChest = block.level.getBlockEntity(block);
+                            if (entityChest instanceof BlockEntityChest) {
+
+                                LinkedHashMap<Integer, Item> items = room.getRandomItem(((BlockEntityChest) entityChest).getSize(), block);
+                                if (items.size() > 0) {
+                                    //开箱
+                                    ((BlockEntityChest) entityChest).getInventory().setContents(items);
+                                }
+
+                            }
                         }
+                    }else{
+                        event.setCancelled();
                     }
+
                 }
             }
         }
+
 
     }
 
@@ -968,7 +970,7 @@ public class RoomManager implements Listener {
                             if(info.isDeath()){
                                 room.sendMessageOnDeath(info+"&7(死亡) &r>> "+msg);
                             }else {
-                                teamInfo.sendMessage(teamInfo.getTeamConfig().getNameColor() + "[队伍]&7 " + info.getPlayer().getName() + " &f>>&r " + msg);
+                                teamInfo.sendMessage(teamInfo.getTeamConfig().getNameColor() + info.getPlayer().getName() + " &f>>&r " + msg);
                             }
                         }else{
                             room.sendMessage(info+" &f>>&r "+msg);

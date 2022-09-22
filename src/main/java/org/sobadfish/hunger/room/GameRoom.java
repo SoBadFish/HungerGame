@@ -454,6 +454,9 @@ public class GameRoom {
     public boolean quitPlayerInfo(PlayerInfo info,boolean teleport){
         if(info != null) {
             info.isLeave = true;
+            if(info.getPlayer().isImmobile()){
+                info.getPlayer().setImmobile(false);
+            }
             if (info.getPlayer() instanceof Player) {
                 if (playerInfos.contains(info)) {
                     PlayerQuitRoomEvent event = new PlayerQuitRoomEvent(info, this,TotalManager.getPlugin());
@@ -560,6 +563,8 @@ public class GameRoom {
         loadTime = 5;
     }
 
+    public boolean isDeath = false;
+
     private void onStart() {
         hasStart = true;
         if(loadTime == -1 && teamAll){
@@ -601,6 +606,18 @@ public class GameRoom {
             }
             if(getLivePlayers().size() == 1){
                 gameEnd(getLivePlayers().get(0));
+                return;
+            }
+
+            if(loadTime <= 300){
+                if(!isDeath){
+                    isDeath = true;
+                    for(PlayerInfo info: getLivePlayers()){
+                        info.sendTitle("&c死斗开始！");
+                        info.getPlayer().teleport(getTeamInfos().get(0).getSpawnLocation());
+                        info.waitTIme = 10;
+                    }
+                }
             }
 
         }else{
@@ -753,7 +770,7 @@ public class GameRoom {
         }
         if(!worldInfo.clickChest.contains(position)){
             for(int i = 0;i < size;i++){
-                if(Utils.rand(0,100) < getRoomConfig().getRound()){
+                if(Utils.rand(0,100) <= getRoomConfig().getRound()){
                     itemLinkedHashMap.put(i,getRoomConfig().items.get(new Random().nextInt(getRoomConfig().items.size())));
                 }
             }

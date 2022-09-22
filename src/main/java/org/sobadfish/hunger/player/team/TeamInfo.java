@@ -87,7 +87,7 @@ public class TeamInfo {
 
 
     public Position getSpawnLocation(){
-        if(spawnTeleportLocation > teamConfig.getSpawnPosition().size()){
+        if(spawnTeleportLocation >= teamConfig.getSpawnPosition().size()){
            spawnTeleportLocation = 0;
         }
         return WorldInfoConfig.getPositionByString(teamConfig.getSpawnPosition().get(spawnTeleportLocation++));

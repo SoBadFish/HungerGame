@@ -124,7 +124,10 @@ public class WorldInfoConfig {
             }
             if (files != null && files.length > 0) {
                 if(Server.getInstance().isLevelLoaded(levelName)) {
-                    Server.getInstance().unloadLevel(Server.getInstance().getLevelByName(levelName), true);
+                    Level level = Server.getInstance().getLevelByName(levelName);
+                    if(level != null) {
+                        Server.getInstance().unloadLevel(level, true);
+                    }
                 }
                 Utils.copyFiles(world, f2);
                 return true;
