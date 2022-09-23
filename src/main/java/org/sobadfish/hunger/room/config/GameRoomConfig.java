@@ -1,5 +1,6 @@
 package org.sobadfish.hunger.room.config;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
 import org.sobadfish.hunger.manager.TotalManager;
@@ -120,7 +121,7 @@ public class GameRoomConfig {
     /**
      * 箱子物品
      * */
-    public ArrayList<Item> items = new ArrayList<>();
+    public Map<Block,ItemConfig> items = new LinkedHashMap<>();
 
     public int noDamage = 60;
 
@@ -210,8 +211,8 @@ public class GameRoomConfig {
                     TotalManager.saveResource("items.yml","/rooms/"+name+"/items.yml",false);
                 }
                 Config item = new Config(file + "/items.yml", Config.YAML);
-                List<String> strings = item.getStringList("items");
-                List<Item> buildItem = buildItem(strings);
+                List<Map> strings = item.getMapList("chests");
+                Map<Block,ItemConfig> buildItem = buildItem(strings);
                 Config room = new Config(file+"/room.yml",Config.YAML);
                 WorldInfoConfig worldInfoConfig = WorldInfoConfig.getInstance(name,room);
                 if(worldInfoConfig == null){
@@ -238,7 +239,9 @@ public class GameRoomConfig {
                 roomConfig.victoryCommand = new ArrayList<>(room.getStringList("victoryCmd"));
                 roomConfig.defeatCommand = new ArrayList<>(room.getStringList("defeatCmd"));
                 roomConfig.deathgrop = room.getBoolean("deathgrop",false);
-                roomConfig.items = new ArrayList<>(buildItem);
+
+                roomConfig.items = buildItem;
+
                 roomConfig.round = room.getInt("round",10);
                 roomConfig.noDamage = room.getInt("noDamage",60);
                 List<FloatTextInfoConfig> configs = new ArrayList<>();
@@ -270,13 +273,29 @@ public class GameRoomConfig {
 
     }
 
-    private static List<Item> buildItem(List<String> itemList){
-        List<Item> items = new ArrayList<>();
-        for(String s: itemList){
-            items.addAll(stringToItemList(s));
+    private static Map<Block,ItemConfig> buildItem(List<Map> itemList){
+        LinkedHashMap<Block,ItemConfig> configLinkedHashMap = new LinkedHashMap<>();
+        for(Map map: itemList){
+            if(map.containsKey("block")) {
+                String[] blockString = map.get("block").toString().split(":");
+                Block block = Block.get(Integer.parseInt(blockString[0]),Integer.parseInt(blockString[1]));
+                List<Item> items = new ArrayList<>();
+                String name = "未命名";
+                if(map.containsKey("items")) {
+                    List<?> list = (List<?>) map.get("items");
+                    for (Object s : list) {
+                        items.addAll(stringToItemList(s.toString()));
+                    }
+                    Collections.shuffle(items);
+                }
+                if(map.containsKey("name")){
+                    name = map.get("name").toString();
+                }
+                configLinkedHashMap.put(block,new ItemConfig(block,name,items));
+            }
         }
-        Collections.shuffle(items);
-        return items;
+        return configLinkedHashMap;
+
     }
 
     private static List<Item> stringToItemList(String str){

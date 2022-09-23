@@ -5,8 +5,10 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockChest;
+import cn.nukkit.block.BlockEnderChest;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityChest;
+import cn.nukkit.blockentity.BlockEntityEnderChest;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
@@ -24,6 +26,7 @@ import cn.nukkit.event.level.WeatherChangeEvent;
 import cn.nukkit.event.player.*;
 import cn.nukkit.form.response.FormResponseSimple;
 import cn.nukkit.inventory.Inventory;
+import cn.nukkit.inventory.PlayerEnderChestInventory;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.inventory.transaction.InventoryTransaction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
@@ -46,6 +49,7 @@ import org.sobadfish.hunger.player.team.TeamInfo;
 import org.sobadfish.hunger.room.GameRoom;
 import org.sobadfish.hunger.room.GameRoom.GameType;
 import org.sobadfish.hunger.room.config.GameRoomConfig;
+import org.sobadfish.hunger.room.config.ItemConfig;
 import org.sobadfish.hunger.tools.Utils;
 
 import java.io.File;
@@ -600,13 +604,26 @@ public class RoomManager implements Listener {
 
                             BlockEntity entityChest = block.level.getBlockEntity(block);
                             if (entityChest instanceof BlockEntityChest) {
-
+                                ItemConfig config = room.getRandomItemConfig(block);
+                                if(config != null) {
+                                    ((BlockEntityChest) entityChest).setName(config.name);
+                                }
                                 LinkedHashMap<Integer, Item> items = room.getRandomItem(((BlockEntityChest) entityChest).getSize(), block);
                                 if (items.size() > 0) {
                                     //开箱
                                     ((BlockEntityChest) entityChest).getInventory().setContents(items);
                                 }
+                            }
+                        }
+                        if(block instanceof BlockEnderChest){
 
+                            BlockEntity entityChest = block.level.getBlockEntity(block);
+                            if (entityChest instanceof BlockEntityEnderChest) {
+                                PlayerEnderChestInventory enderChestInventory = player.getEnderChestInventory();
+                                LinkedHashMap<Integer, Item> items = room.getRandomItem(enderChestInventory.getSize(), block);
+                                if (items.size() > 0) {
+                                    enderChestInventory.setContents(items);
+                                }
                             }
                         }
                     }else{
@@ -739,6 +756,29 @@ public class RoomManager implements Listener {
             }
         }
     }
+
+    //事件响应
+    @EventHandler
+    public void onQuitRoom(PlayerQuitRoomEvent event){
+        if(event.performCommand){
+            PlayerInfo info = event.getPlayerInfo();
+            PlayerData data = TotalManager.getDataManager().getData(info.getName());
+            data.setInfo(info);
+
+            GameRoom room = event.getRoom();
+            info.clear();
+
+            if(info.getPlayer() instanceof Player && ((Player) info.getPlayer()).isOnline()){
+                ((Player)info.getPlayer()).setFoodEnabled(false);
+                room.getRoomConfig().quitRoomCommand.forEach(cmd-> Server.getInstance().dispatchCommand(((Player)info.getPlayer()),cmd));
+            }
+            if(info.isWatch()){
+                return;
+            }
+            room.sendMessage("&c玩家 "+event.getPlayerInfo().getPlayer().getName()+" 离开了游戏");
+        }
+    }
+
 
 
 

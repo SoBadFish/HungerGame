@@ -2,6 +2,7 @@ package org.sobadfish.hunger.room;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.item.Item;
@@ -24,15 +25,13 @@ import org.sobadfish.hunger.player.PlayerInfo;
 import org.sobadfish.hunger.player.team.TeamInfo;
 import org.sobadfish.hunger.player.team.config.TeamInfoConfig;
 import org.sobadfish.hunger.room.config.GameRoomConfig;
+import org.sobadfish.hunger.room.config.ItemConfig;
 import org.sobadfish.hunger.room.floattext.FloatTextInfo;
 import org.sobadfish.hunger.room.floattext.FloatTextInfoConfig;
 import org.sobadfish.hunger.room.world.WorldInfo;
 import org.sobadfish.hunger.tools.Utils;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -101,6 +100,13 @@ public class GameRoom {
 
     public GameRoomConfig getRoomConfig() {
         return roomConfig;
+    }
+
+    public List<Item> getRoundItems(Block block){
+        if(roomConfig.items.containsKey(block)){
+            return roomConfig.items.get(block).items;
+        }
+        return new ArrayList<>();
     }
 
 
@@ -760,21 +766,28 @@ public class GameRoom {
 
     }
 
+    public ItemConfig getRandomItemConfig(Block block){
+        if(roomConfig.items.containsKey(block)){
+            return roomConfig.items.get(block);
+        }
+        return null;
+    }
+
     /**
      * 设置资源箱的物品
      * */
-    public LinkedHashMap<Integer, Item> getRandomItem(int size,Position position){
+    public LinkedHashMap<Integer, Item> getRandomItem(int size,Block block){
         LinkedHashMap<Integer,Item> itemLinkedHashMap = new LinkedHashMap<>();
         if(worldInfo == null){
             return itemLinkedHashMap;
         }
-        if(!worldInfo.clickChest.contains(position)){
+        if(!worldInfo.clickChest.contains(block)){
             for(int i = 0;i < size;i++){
                 if(Utils.rand(0,100) <= getRoomConfig().getRound()){
-                    itemLinkedHashMap.put(i,getRoomConfig().items.get(new Random().nextInt(getRoomConfig().items.size())));
+                    itemLinkedHashMap.put(i,getRoundItems(block).get(new Random().nextInt(getRoomConfig().items.size())));
                 }
             }
-            worldInfo.clickChest.add(position);
+            worldInfo.clickChest.add(block);
         }
         return itemLinkedHashMap;
 

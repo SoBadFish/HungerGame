@@ -693,8 +693,17 @@ public class PlayerInfo {
         //TODO 玩家更新线程
         if(playerType == PlayerType.START){
             //TODO 游戏开始后 可以弄一些buff
-            player.setNameTag(TextFormat.colorize('&',teamInfo.getTeamConfig().getNameColor()+player.getName()+" \n&c❤&7"+String.format("%.1f",player.getHealth())));
 
+            player.setNameTag(TextFormat.colorize('&',teamInfo.getTeamConfig().getNameColor()+player.getName()+" \n&c❤&7"+String.format("%.1f",player.getHealth())));
+            //快速消耗饥饿值//
+            if(player instanceof Player){
+                if(loadTime < 5){
+                    loadTime++;
+                }else{
+                    ((Player) player).getFoodData().useHunger(1);
+                    loadTime = 0;
+                }
+            }
 
         }else if(playerType == PlayerType.WAIT){
             if(getGameRoom().getRoomConfig().getWorldInfo().getWaitPosition().getY() - player.getY() > getGameRoom().getRoomConfig().callbackY){
