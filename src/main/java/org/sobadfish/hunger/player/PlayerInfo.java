@@ -590,8 +590,12 @@ public class PlayerInfo {
             lore.add("   ");
 
         }else{
-
+            lore.add("    ");
             lore.add("游戏结束: &a"+formatTime(getGameRoom().loadTime));
+            lore.add("     ");
+            if(noDamage > 0){
+                lore.add("无敌时间: &a"+noDamage+" 秒");
+            }
             for(TeamInfo teamInfo: gameRoom.getTeamInfos()){
                 lore.add(teamInfo.getTeamConfig().getName()+": &e"+teamInfo.getLivePlayer().size()+" &7/&a "+teamInfo.getTeamPlayers().size());
             }
