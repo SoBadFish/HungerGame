@@ -103,8 +103,8 @@ public class GameRoom {
     }
 
     public List<Item> getRoundItems(Block block){
-        if(roomConfig.items.containsKey(block)){
-            return roomConfig.items.get(block).items;
+        if(roomConfig.items.containsKey(block.getId()+":"+block.getDamage())){
+            return roomConfig.items.get(block.getId()+":"+block.getDamage()).items;
         }
         return new ArrayList<>();
     }
@@ -767,8 +767,8 @@ public class GameRoom {
     }
 
     public ItemConfig getRandomItemConfig(Block block){
-        if(roomConfig.items.containsKey(block)){
-            return roomConfig.items.get(block);
+        if(roomConfig.items.containsKey(block.getId()+":"+block.getDamage())){
+            return roomConfig.items.get(block.getId()+":"+block.getDamage());
         }
         return null;
     }

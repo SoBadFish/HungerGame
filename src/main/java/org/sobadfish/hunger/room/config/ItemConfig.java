@@ -1,6 +1,5 @@
 package org.sobadfish.hunger.room.config;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
 
 import java.util.List;
@@ -11,13 +10,13 @@ import java.util.List;
  */
 public class ItemConfig {
 
-    public Block block;
+    public String block;
 
     public String name;
 
     public List<Item> items;
 
-    public ItemConfig(Block block, String name, List<Item> items){
+    public ItemConfig(String block, String name, List<Item> items){
         this.block = block;
         this.name = name;
         this.items = items;

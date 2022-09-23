@@ -603,19 +603,24 @@ public class RoomManager implements Listener {
                     if(room.getType() == GameType.START) {
                         ItemConfig config = room.getRandomItemConfig(block);
                         if(config != null){
+                            System.out.println("读取到配置 "+config.items.size());
                             BlockEntity entityChest = block.level.getBlockEntity(block);
                             if(entityChest instanceof InventoryHolder && entityChest instanceof BlockEntityNameable){
+                                System.out.println("判断为容器 ");
                                 ((BlockEntityNameable) entityChest).setName(config.name);
                                 LinkedHashMap<Integer, Item> items = room.getRandomItem(((InventoryHolder) entityChest).getInventory().getSize(), block);
                                 if (items.size() > 0) {
                                     //开箱
+                                    System.out.println("生成物品");
                                     ((BlockEntityChest) entityChest).getInventory().setContents(items);
                                 }
                             }
                             if(entityChest instanceof BlockEntityEnderChest){
+                                System.out.println("判断为末影箱 ");
                                 PlayerEnderChestInventory enderChestInventory = player.getEnderChestInventory();
                                 LinkedHashMap<Integer, Item> items = room.getRandomItem(enderChestInventory.getSize(), block);
                                 if (items.size() > 0) {
+                                    System.out.println("生成物品");
                                     enderChestInventory.setContents(items);
                                 }
                             }

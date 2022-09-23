@@ -1,6 +1,5 @@
 package org.sobadfish.hunger.room.config;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
 import org.sobadfish.hunger.manager.TotalManager;
@@ -121,7 +120,7 @@ public class GameRoomConfig {
     /**
      * 箱子物品
      * */
-    public Map<Block,ItemConfig> items = new LinkedHashMap<>();
+    public Map<String,ItemConfig> items = new LinkedHashMap<>();
 
     public int noDamage = 60;
 
@@ -212,7 +211,7 @@ public class GameRoomConfig {
                 }
                 Config item = new Config(file + "/items.yml", Config.YAML);
                 List<Map> strings = item.getMapList("chests");
-                Map<Block,ItemConfig> buildItem = buildItem(strings);
+                Map<String,ItemConfig> buildItem = buildItem(strings);
                 Config room = new Config(file+"/room.yml",Config.YAML);
                 WorldInfoConfig worldInfoConfig = WorldInfoConfig.getInstance(name,room);
                 if(worldInfoConfig == null){
@@ -273,12 +272,12 @@ public class GameRoomConfig {
 
     }
 
-    private static Map<Block,ItemConfig> buildItem(List<Map> itemList){
-        LinkedHashMap<Block,ItemConfig> configLinkedHashMap = new LinkedHashMap<>();
+    private static Map<String,ItemConfig> buildItem(List<Map> itemList){
+        LinkedHashMap<String,ItemConfig> configLinkedHashMap = new LinkedHashMap<>();
         for(Map map: itemList){
             if(map.containsKey("block")) {
-                String[] blockString = map.get("block").toString().split(":");
-                Block block = Block.get(Integer.parseInt(blockString[0]),Integer.parseInt(blockString[1]));
+                String block = map.get("block").toString();
+
                 List<Item> items = new ArrayList<>();
                 String name = "未命名";
                 if(map.containsKey("items")) {
@@ -291,9 +290,11 @@ public class GameRoomConfig {
                 if(map.containsKey("name")){
                     name = map.get("name").toString();
                 }
+                TotalManager.sendMessageToConsole("&e物品读取完成 &r》"+items.size()+"《");
                 configLinkedHashMap.put(block,new ItemConfig(block,name,items));
             }
         }
+        TotalManager.sendMessageToConsole("&a物品加载完成: &r》"+configLinkedHashMap.size()+"《");
         return configLinkedHashMap;
 
     }
