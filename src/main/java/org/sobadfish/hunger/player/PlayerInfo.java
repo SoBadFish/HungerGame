@@ -757,6 +757,8 @@ public class PlayerInfo {
         if (getPlayer() instanceof Player) {
             ((Player) getPlayer()).setGamemode(3);
         }
+        //音效
+        gameRoom.addSound(Sound.RANDOM_SCREENSHOT);
 
         if(getGameRoom().getWorldInfo().getConfig().getGameWorld() == null){
             return;
