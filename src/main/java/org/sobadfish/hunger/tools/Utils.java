@@ -134,7 +134,7 @@ public class Utils {
         CompoundTag nbt = new CompoundTag();
         nbt.putList(new ListTag<DoubleTag>("Pos")
                 .add(new DoubleTag("", position.x + 0.5D))
-                .add(new DoubleTag("", position.y + 0.5D))
+                .add(new DoubleTag("", position.y + 3.5D))
                 .add(new DoubleTag("", position.z + 0.5D))
         );
         nbt.putList(new ListTag<DoubleTag>("Motion")

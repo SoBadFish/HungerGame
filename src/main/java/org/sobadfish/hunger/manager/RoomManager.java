@@ -4,6 +4,7 @@ package org.sobadfish.hunger.manager;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockTNT;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityEnderChest;
 import cn.nukkit.blockentity.BlockEntityNameable;
@@ -968,13 +969,23 @@ public class RoomManager implements Listener {
                     event.setCancelled();
 
                 }
-                if(room.roomConfig.border.size() == 0) {
-                    if (!room.worldInfo.onChangeBlock(block, true)) {
-                        info.sendMessage("&c你不能在这里放置方块");
-                        event.setCancelled();
-                    }
+                if (!room.worldInfo.onChangeBlock(block, true)) {
+                    info.sendMessage("&c你不能在这里放置方块");
+                    event.setCancelled();
                 }
 
+                if (block instanceof BlockTNT) {
+                    try{
+                        event.setCancelled();
+                        ((BlockTNT) block).prime(40);
+                        Item i2 = item.clone();
+                        i2.setCount(1);
+                        event.getPlayer().getInventory().removeItem(i2);
+                    }catch (Exception e){
+                        event.setCancelled();
+                    }
+
+                }
             }
         }
 
@@ -1004,13 +1015,25 @@ public class RoomManager implements Listener {
                     info.sendMessage("&c无法破坏地图方块");
                     event.setCancelled();
                 }
+                BlockEntity entityChest = block.level.getBlockEntity(block);
                 if(room.roomConfig.border.size() > 0){
                     if(room.roomConfig.border.contains(block.getId()+"")){
                         event.setCancelled();
                     }
+                    room.worldInfo.onChangeBlock(block, false);
+                    if(entityChest instanceof InventoryHolder && entityChest instanceof BlockEntityNameable) {
+                        LinkedHashMap<Integer,Item> integers = room.getRandomItem(((InventoryHolder) entityChest).getInventory().getSize(),block);
+                        event.setDrops(integers.values().toArray(new Item[0]));
+                        info.addSound(Sound.MOB_ZOMBIE_WOODBREAK);
+                    }
                 }else {
                     if (room.worldInfo.getPlaceBlock().contains(block)) {
                         room.worldInfo.onChangeBlock(block, false);
+                        if(entityChest instanceof InventoryHolder && entityChest instanceof BlockEntityNameable) {
+                            info.addSound(Sound.MOB_ZOMBIE_WOODBREAK);
+                            LinkedHashMap<Integer,Item> integers = room.getRandomItem(((InventoryHolder) entityChest).getInventory().getSize(),block);
+                            event.setDrops(integers.values().toArray(new Item[0]));
+                        }
                     } else {
                         info.sendMessage("&c无法破坏地图方块");
                         event.setCancelled();

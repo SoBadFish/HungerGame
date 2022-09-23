@@ -665,9 +665,15 @@ public class PlayerInfo {
                         continue;
                     }
                     double dis = info.getPlayer().distance(this.player);
-                    if (dis < 30) {
+                    int d =  getPlayer().getInventory().getItemInHand().count * 10;
+                    if (dis < d) {
                         sendActionBar(info + "在你附近\n&7》&e" + String.format("%.2f",dis) + " 米 &7《");
                     }
+                }
+            }
+            for(Item item: getPlayer().getInventory().getContents().values()){
+                if(gameRoom.getRoomConfig().items.containsKey(item.getId()+"")){
+                    getPlayer().getInventory().remove(item);
                 }
             }
         }
