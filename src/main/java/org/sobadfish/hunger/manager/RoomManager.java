@@ -19,6 +19,7 @@ import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.event.entity.EntityLevelChangeEvent;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.event.level.WeatherChangeEvent;
@@ -697,6 +698,28 @@ public class RoomManager implements Listener {
         }
     }
 
+    /**
+     * 游戏地图的爆炸保护
+     * */
+
+    @EventHandler
+    public void onEntityExplodeEvent(EntityExplodeEvent event){
+        Level level = event.getPosition().getLevel();
+        GameRoom room = getGameRoomByLevel(level);
+        if(room != null) {
+            ArrayList<Block> blocks = new ArrayList<>(event.getBlockList());
+            for (Block block : event.getBlockList()) {
+                if (!room.worldInfo.getPlaceBlock().contains(block)) {
+                    blocks.remove(block);
+
+                }else{
+                    room.worldInfo.getPlaceBlock().remove(block);
+                }
+            }
+            event.setBlockList(blocks);
+        }
+    }
+
     @EventHandler
     public void onGetExp(PlayerGetExpEvent event){
         String playerName = event.getPlayerName();
@@ -933,6 +956,7 @@ public class RoomManager implements Listener {
     public void onPlaceBlock(BlockPlaceEvent event){
         Level level = event.getBlock().level;
 
+        Block block = event.getBlock();
         Item item = event.getItem();
         if(item.hasCompoundTag() && (item.getNamedTag().contains(TotalManager.GAME_NAME)
         )){
@@ -947,6 +971,10 @@ public class RoomManager implements Listener {
                     info.sendMessage("&c观察状态下不能放置方块");
                     event.setCancelled();
 
+                }
+                if (!room.worldInfo.onChangeBlock(block, true)) {
+                    info.sendMessage("&c你不能在这里放置方块");
+                    event.setCancelled();
                 }
 
             }
@@ -969,12 +997,21 @@ public class RoomManager implements Listener {
             event.setCancelled();
             return;
         }
+        Block block = event.getBlock();
         GameRoom room = getGameRoomByLevel(level);
         if(room != null){
             PlayerInfo info = room.getPlayerInfo(event.getPlayer());
             if(info != null) {
-                info.sendMessage("&c无法破坏地图方块");
-                event.setCancelled();
+                if(info.isWatch()) {
+                    info.sendMessage("&c无法破坏地图方块");
+                    event.setCancelled();
+                }
+                if(room.worldInfo.getPlaceBlock().contains(block)) {
+                    room.worldInfo.onChangeBlock(block, false);
+                }else{
+                    info.sendMessage("&c无法破坏地图方块");
+                    event.setCancelled();
+                }
             }
         }
 

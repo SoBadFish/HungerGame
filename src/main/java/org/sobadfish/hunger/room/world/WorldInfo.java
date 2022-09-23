@@ -1,6 +1,7 @@
 package org.sobadfish.hunger.room.world;
 
 
+import cn.nukkit.block.Block;
 import cn.nukkit.level.Position;
 import org.sobadfish.hunger.room.GameRoom;
 import org.sobadfish.hunger.room.config.WorldInfoConfig;
@@ -24,6 +25,8 @@ public class WorldInfo {
 
     private WorldInfoConfig config;
 
+    public List<Block> placeBlock = new ArrayList<>();
+
     public List<Position> clickChest = new ArrayList<>();
 
     public WorldInfo(GameRoom room,WorldInfoConfig config){
@@ -44,10 +47,24 @@ public class WorldInfo {
         isClose = close;
     }
 
+    public boolean onChangeBlock(Block block,boolean isPlace){
+
+        if(isPlace){
+            placeBlock.add(block);
+        }else{
+            placeBlock.remove(block);
+        }
+        return true;
+    }
+
     public void onUpdate() {
         //TODO 地图更新 每秒更新一次 可实现一些定制化功能
 
 
         ///////////////////DO Something////////////
+    }
+
+    public List<Block> getPlaceBlock() {
+        return placeBlock;
     }
 }
