@@ -4,11 +4,10 @@ package org.sobadfish.hunger.manager;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockChest;
-import cn.nukkit.block.BlockEnderChest;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.blockentity.BlockEntityEnderChest;
+import cn.nukkit.blockentity.BlockEntityNameable;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
@@ -26,6 +25,7 @@ import cn.nukkit.event.level.WeatherChangeEvent;
 import cn.nukkit.event.player.*;
 import cn.nukkit.form.response.FormResponseSimple;
 import cn.nukkit.inventory.Inventory;
+import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.PlayerEnderChestInventory;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.inventory.transaction.InventoryTransaction;
@@ -600,31 +600,23 @@ public class RoomManager implements Listener {
                     Block block = event.getBlock();
 
                     if(room.getType() == GameType.START) {
-                        if (block instanceof BlockChest) {
-
+                        ItemConfig config = room.getRandomItemConfig(block);
+                        if(config != null){
                             BlockEntity entityChest = block.level.getBlockEntity(block);
-                            if (entityChest instanceof BlockEntityChest) {
-                                ItemConfig config = room.getRandomItemConfig(block);
-                                if(config != null) {
-                                    ((BlockEntityChest) entityChest).setName(config.name);
-                                }
-                                LinkedHashMap<Integer, Item> items = room.getRandomItem(((BlockEntityChest) entityChest).getSize(), block);
+                            if(entityChest instanceof InventoryHolder && entityChest instanceof BlockEntityNameable){
+                                ((BlockEntityNameable) entityChest).setName(config.name);
+                                LinkedHashMap<Integer, Item> items = room.getRandomItem(((InventoryHolder) entityChest).getInventory().getSize(), block);
                                 if (items.size() > 0) {
                                     //开箱
                                     ((BlockEntityChest) entityChest).getInventory().setContents(items);
                                 }
                             }
-                        }
-                        if(block instanceof BlockEnderChest){
-
-                            BlockEntity entityChest = block.level.getBlockEntity(block);
-                            if (entityChest instanceof BlockEntityEnderChest) {
+                            if(entityChest instanceof BlockEntityEnderChest){
                                 PlayerEnderChestInventory enderChestInventory = player.getEnderChestInventory();
                                 LinkedHashMap<Integer, Item> items = room.getRandomItem(enderChestInventory.getSize(), block);
-                                if (items.size() > 0) {
-                                    enderChestInventory.setContents(items);
-                                }
+                                enderChestInventory.setContents(items);
                             }
+
                         }
                     }else{
                         event.setCancelled();
