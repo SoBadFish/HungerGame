@@ -665,8 +665,8 @@ public class PlayerInfo {
                         continue;
                     }
                     double dis = info.getPlayer().distance(this.player);
-                    if (dis < 20) {
-                        sendActionBar(info + "在你附近 》" + dis + " 米 《");
+                    if (dis < 30) {
+                        sendActionBar(info + "在你附近\n&7》&e" + String.format("%.2f",dis) + " 米 &7《");
                     }
                 }
             }

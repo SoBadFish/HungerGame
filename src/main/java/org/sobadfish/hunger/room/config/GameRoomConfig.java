@@ -284,12 +284,27 @@ public class GameRoomConfig {
         String[] sl = str.split("-");
         if(sl.length > 1){
             for(int i = 0;i < Integer.parseInt(sl[1]);i++){
-                items.add(Item.fromString(sl[0]));
+                items.add(stringToItem(sl[0]));
             }
         }else{
-            items.add(Item.fromString(sl[0]));
+            items.add(stringToItem(sl[0]));
         }
         return items;
+    }
+
+    private static Item stringToItem(String s){
+        String[] sList = s.split(":");
+        Item item = Item.get(Integer.parseInt(sList[0]));
+        if(sList.length > 1){
+            item.setDamage(Integer.parseInt(sList[1]));
+            if(sList.length > 2){
+                item.setCount(Integer.parseInt(sList[2]));
+            }else{
+                item.setCount(1);
+            }
+        }
+        return item;
+
     }
 
 
