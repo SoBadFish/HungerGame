@@ -614,7 +614,9 @@ public class RoomManager implements Listener {
                             if(entityChest instanceof BlockEntityEnderChest){
                                 PlayerEnderChestInventory enderChestInventory = player.getEnderChestInventory();
                                 LinkedHashMap<Integer, Item> items = room.getRandomItem(enderChestInventory.getSize(), block);
-                                enderChestInventory.setContents(items);
+                                if (items.size() > 0) {
+                                    enderChestInventory.setContents(items);
+                                }
                             }
 
                         }
