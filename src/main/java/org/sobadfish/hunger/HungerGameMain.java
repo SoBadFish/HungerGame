@@ -18,7 +18,6 @@ public class HungerGameMain extends PluginBase {
     @Override
     public void onEnable() {
 
-
         this.getLogger().info(TextFormat.colorize('&',"&e _  _                         ___                "));
         this.getLogger().info(TextFormat.colorize('&',"&e| || |_  _ _ _  __ _ ___ _ _ / __|__ _ _ __  ___ "));
         this.getLogger().info(TextFormat.colorize('&',"&e| __ | || | ' \\/ _` / -_) '_| (_ / _` | '  \\/ -_)"));
