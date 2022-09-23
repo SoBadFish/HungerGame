@@ -2,12 +2,15 @@ package org.sobadfish.hunger.room.world;
 
 
 import cn.nukkit.block.Block;
+import cn.nukkit.inventory.PlayerEnderChestInventory;
 import cn.nukkit.level.Position;
 import org.sobadfish.hunger.room.GameRoom;
 import org.sobadfish.hunger.room.config.WorldInfoConfig;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 地图的实例化方法，当房间启动后，这个方法也随之启动
@@ -28,6 +31,8 @@ public class WorldInfo {
     public List<Block> placeBlock = new ArrayList<>();
 
     public List<Position> clickChest = new ArrayList<>();
+
+    public Map<Position, PlayerEnderChestInventory> clickEnder = new LinkedHashMap<>();
 
     public WorldInfo(GameRoom room,WorldInfoConfig config){
         this.config = config;

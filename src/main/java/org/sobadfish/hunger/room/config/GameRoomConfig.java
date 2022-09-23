@@ -45,7 +45,7 @@ public class GameRoomConfig {
     /**
      * 是否掉落物品
      * */
-    public boolean deathgrop;
+    public boolean deathDrop = true;
 
     /**
      * 最低人数
@@ -95,6 +95,11 @@ public class GameRoomConfig {
      * 禁用指令
      * */
     public ArrayList<String> banCommand = new ArrayList<>();
+
+    /**
+     * 边界
+     * */
+    public ArrayList<String> border = new ArrayList<>();
 
     /**
      * 退出房间执行指令
@@ -157,8 +162,8 @@ public class GameRoomConfig {
         return maxWaitTime;
     }
 
-    public boolean isDeathgrop() {
-        return deathgrop;
+    public boolean isDeathDrop() {
+        return deathDrop;
     }
 
     public String getName() {
@@ -237,8 +242,8 @@ public class GameRoomConfig {
                 roomConfig.quitRoomCommand = new ArrayList<>(room.getStringList("QuitRoom"));
                 roomConfig.victoryCommand = new ArrayList<>(room.getStringList("victoryCmd"));
                 roomConfig.defeatCommand = new ArrayList<>(room.getStringList("defeatCmd"));
-                roomConfig.deathgrop = room.getBoolean("deathgrop",false);
-
+                roomConfig.deathDrop = room.getBoolean("deathDrop",true);
+                roomConfig.border = new ArrayList<>(room.getStringList("border"));
                 roomConfig.items = buildItem;
 
                 roomConfig.round = room.getInt("round",10);
@@ -276,7 +281,7 @@ public class GameRoomConfig {
         LinkedHashMap<String,ItemConfig> configLinkedHashMap = new LinkedHashMap<>();
         for(Map map: itemList){
             if(map.containsKey("block")) {
-                String block = map.get("block").toString();
+                String block = map.get("block").toString().split(":")[0];
 
                 List<Item> items = new ArrayList<>();
                 String name = "未命名";
@@ -290,7 +295,7 @@ public class GameRoomConfig {
                 if(map.containsKey("name")){
                     name = map.get("name").toString();
                 }
-                TotalManager.sendMessageToConsole("&e物品读取完成 &r》"+items.size()+"《");
+                TotalManager.sendMessageToConsole("&e物品读取完成 &7("+block+")&r》"+items.size()+"《");
                 configLinkedHashMap.put(block,new ItemConfig(block,name,items));
             }
         }
@@ -377,7 +382,7 @@ public class GameRoomConfig {
         config.set("hasWatch", hasWatch);
         config.set("AutomaticNextRound",isAutomaticNextRound);
         config.set("defeatCmd",defeatCommand);
-        config.set("deathgrop",deathgrop);
+        config.set("deathDrop", deathDrop);
         config.set("victoryCmd",victoryCommand);
         config.set("round",round);
         config.set("noDamage",noDamage);

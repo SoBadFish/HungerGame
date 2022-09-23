@@ -14,6 +14,10 @@ QuitRoom: []
 AutomaticNextRound: true
 victoryCmd: []
 defeatCmd: []
+# 边界方块
+border:
+  - "241"
+  - "20"
 # 生成物品的概率
 round: 20
 # 无敌时间

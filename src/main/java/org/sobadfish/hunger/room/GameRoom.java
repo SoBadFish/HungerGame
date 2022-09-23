@@ -5,6 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
+import cn.nukkit.inventory.PlayerEnderChestInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
@@ -71,6 +72,8 @@ public class GameRoom {
      * */
     public WorldInfo worldInfo;
 
+
+
     public boolean close;
 
     private GameRoom(GameRoomConfig roomConfig){
@@ -103,8 +106,8 @@ public class GameRoom {
     }
 
     public List<Item> getRoundItems(Block block){
-        if(roomConfig.items.containsKey(block.getId()+":"+block.getDamage())){
-            return roomConfig.items.get(block.getId()+":"+block.getDamage()).items;
+        if(roomConfig.items.containsKey(block.getId()+"")){
+            return roomConfig.items.get(block.getId()+"").items;
         }
         return new ArrayList<>();
     }
@@ -767,10 +770,30 @@ public class GameRoom {
     }
 
     public ItemConfig getRandomItemConfig(Block block){
-        if(roomConfig.items.containsKey(block.getId()+":"+block.getDamage())){
-            return roomConfig.items.get(block.getId()+":"+block.getDamage());
+        if(roomConfig.items.containsKey(block.getId()+"")){
+            return roomConfig.items.get(block.getId()+"");
         }
         return null;
+    }
+
+
+
+    //末影箱物品共享算法
+    public void getRandomItemEnder(int size,Block block,Player player){
+        PlayerEnderChestInventory enderChestInventory = player.getEnderChestInventory();
+        LinkedHashMap<Integer,Item> randomItem = getRandomItem(size,block);
+        if(randomItem.size() == 0){
+            if(worldInfo.clickEnder.containsKey(block)){
+                PlayerEnderChestInventory inventory = worldInfo.clickEnder.get(block);
+                enderChestInventory.setContents(inventory.getContents());
+            }else{
+                enderChestInventory.setContents(randomItem);
+            }
+        }else{
+            enderChestInventory.setContents(randomItem);
+        }
+        worldInfo.clickEnder.put(block,enderChestInventory);
+
     }
 
     /**
@@ -782,9 +805,10 @@ public class GameRoom {
             return itemLinkedHashMap;
         }
         if(!worldInfo.clickChest.contains(block)){
+            List<Item> list = getRoundItems(block);
             for(int i = 0;i < size;i++){
                 if(Utils.rand(0,100) <= getRoomConfig().getRound()){
-                    itemLinkedHashMap.put(i,getRoundItems(block).get(new Random().nextInt(getRoomConfig().items.size())));
+                    itemLinkedHashMap.put(i,list.get(new Random().nextInt(list.size())));
                 }
             }
             worldInfo.clickChest.add(block);

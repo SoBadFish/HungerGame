@@ -5,7 +5,6 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.blockentity.BlockEntityEnderChest;
 import cn.nukkit.blockentity.BlockEntityNameable;
 import cn.nukkit.command.ConsoleCommandSender;
@@ -603,26 +602,18 @@ public class RoomManager implements Listener {
                     if(room.getType() == GameType.START) {
                         ItemConfig config = room.getRandomItemConfig(block);
                         if(config != null){
-                            System.out.println("读取到配置 "+config.items.size());
+
                             BlockEntity entityChest = block.level.getBlockEntity(block);
                             if(entityChest instanceof InventoryHolder && entityChest instanceof BlockEntityNameable){
-                                System.out.println("判断为容器 ");
-                                ((BlockEntityNameable) entityChest).setName(config.name);
+//                                ((BlockEntityNameable) entityChest).setName(config.name);/
                                 LinkedHashMap<Integer, Item> items = room.getRandomItem(((InventoryHolder) entityChest).getInventory().getSize(), block);
                                 if (items.size() > 0) {
-                                    //开箱
-                                    System.out.println("生成物品");
-                                    ((BlockEntityChest) entityChest).getInventory().setContents(items);
+                                    ((InventoryHolder) entityChest).getInventory().setContents(items);
                                 }
                             }
                             if(entityChest instanceof BlockEntityEnderChest){
-                                System.out.println("判断为末影箱 ");
                                 PlayerEnderChestInventory enderChestInventory = player.getEnderChestInventory();
-                                LinkedHashMap<Integer, Item> items = room.getRandomItem(enderChestInventory.getSize(), block);
-                                if (items.size() > 0) {
-                                    System.out.println("生成物品");
-                                    enderChestInventory.setContents(items);
-                                }
+                                room.getRandomItemEnder(enderChestInventory.getSize(),block,player);
                             }
 
                         }
@@ -977,9 +968,11 @@ public class RoomManager implements Listener {
                     event.setCancelled();
 
                 }
-                if (!room.worldInfo.onChangeBlock(block, true)) {
-                    info.sendMessage("&c你不能在这里放置方块");
-                    event.setCancelled();
+                if(room.roomConfig.border.size() == 0) {
+                    if (!room.worldInfo.onChangeBlock(block, true)) {
+                        info.sendMessage("&c你不能在这里放置方块");
+                        event.setCancelled();
+                    }
                 }
 
             }
@@ -1011,11 +1004,17 @@ public class RoomManager implements Listener {
                     info.sendMessage("&c无法破坏地图方块");
                     event.setCancelled();
                 }
-                if(room.worldInfo.getPlaceBlock().contains(block)) {
-                    room.worldInfo.onChangeBlock(block, false);
-                }else{
-                    info.sendMessage("&c无法破坏地图方块");
-                    event.setCancelled();
+                if(room.roomConfig.border.size() > 0){
+                    if(room.roomConfig.border.contains(block.getId()+"")){
+                        event.setCancelled();
+                    }
+                }else {
+                    if (room.worldInfo.getPlaceBlock().contains(block)) {
+                        room.worldInfo.onChangeBlock(block, false);
+                    } else {
+                        info.sendMessage("&c无法破坏地图方块");
+                        event.setCancelled();
+                    }
                 }
             }
         }

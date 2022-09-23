@@ -772,7 +772,7 @@ public class PlayerInfo {
         if(getGameRoom().getWorldInfo().getConfig().getGameWorld() == null){
             return;
         }
-        player.teleport(teamInfo.getSpawnLocation());
+
         deathCount++;
         if(event != null) {
             if (event.getCause() == EntityDamageEvent.DamageCause.VOID) {
@@ -825,7 +825,7 @@ public class PlayerInfo {
 //        playerType = PlayerType.DEATH;
         damageByInfo = null;
         if(gameRoom != null){
-            if(gameRoom.getRoomConfig().isDeathgrop()){
+            if(gameRoom.getRoomConfig().isDeathDrop()){
                 for(Item item: player.getInventory().getContents().values()){
                     player.level.dropItem(player,item,new Vector3(0,0.5,0));
                 }
