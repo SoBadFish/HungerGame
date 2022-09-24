@@ -3,6 +3,7 @@ package org.sobadfish.hunger.room.world;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.inventory.PlayerEnderChestInventory;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import org.sobadfish.hunger.room.GameRoom;
 import org.sobadfish.hunger.room.config.WorldInfoConfig;
@@ -37,6 +38,11 @@ public class WorldInfo {
     public WorldInfo(GameRoom room,WorldInfoConfig config){
         this.config = config;
         this.room = room;
+        Level level = config.getGameWorld();
+        if(level != null) {
+            level.setTime(0);
+            level.stopTime();
+        }
 
     }
 

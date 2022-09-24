@@ -844,7 +844,7 @@ public class PlayerInfo {
         player.getInventory().clearAll();
         player.getOffhandInventory().clearAll();
         if(playerType == PlayerType.WATCH){
-            getGameRoom().joinWatch(this);
+            getGameRoom().joinWatch(this,false);
         }
     }
 

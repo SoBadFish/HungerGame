@@ -141,7 +141,11 @@ public class GameRoom {
         watchPlayer.forEach(dp -> dp.sendMessage(msg));
     }
 
-    public void joinWatch(PlayerInfo info) {
+    public void joinWatch(PlayerInfo info){
+        joinWatch(info,true);
+    }
+
+    public void joinWatch(PlayerInfo info,boolean isSpawn) {
         //TODO 欢迎加入观察者大家庭
         if(!playerInfos.contains(info)){
 
@@ -164,10 +168,12 @@ public class GameRoom {
         info.getPlayer().getInventory().setHeldItemSlot(0);
         sendMessage("&7"+info+"&7 成为了旁观者 （"+getWatchPlayers().size()+"）");
         info.sendMessage("&e你可以等待游戏结束 也可以手动退出游戏房间");
-        Position position = getTeamInfos().get(0).getSpawnLocation();
-        position.add(0,64,0);
-        position.level = getWorldInfo().getConfig().getGameWorld();
-        info.getPlayer().teleport(position);
+        if(isSpawn) {
+            Position position = getTeamInfos().get(0).getSpawnLocation();
+            position.add(0, 64, 0);
+            position.level = getWorldInfo().getConfig().getGameWorld();
+            info.getPlayer().teleport(position);
+        }
 
     }
 
@@ -806,12 +812,14 @@ public class GameRoom {
         }
         if(!worldInfo.clickChest.contains(block)){
             List<Item> list = getRoundItems(block);
-            for(int i = 0;i < size;i++){
-                if(Utils.rand(0,100) <= getRoomConfig().getRound()){
-                    itemLinkedHashMap.put(i,list.get(new Random().nextInt(list.size())));
+            if(list.size() > 0) {
+                for (int i = 0; i < size; i++) {
+                    if (Utils.rand(0, 100) <= getRoomConfig().getRound()) {
+                        itemLinkedHashMap.put(i, list.get(new Random().nextInt(list.size())));
+                    }
                 }
+                worldInfo.clickChest.add(block);
             }
-            worldInfo.clickChest.add(block);
         }
         return itemLinkedHashMap;
 
