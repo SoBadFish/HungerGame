@@ -5,14 +5,15 @@ import cn.nukkit.Server;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.scheduler.AsyncTask;
 import org.sobadfish.hunger.entity.GameFloatText;
-import org.sobadfish.hunger.manager.*;
+import org.sobadfish.hunger.event.ReloadWorldEvent;
+import org.sobadfish.hunger.manager.FloatTextManager;
+import org.sobadfish.hunger.manager.ThreadManager;
+import org.sobadfish.hunger.manager.TotalManager;
+import org.sobadfish.hunger.manager.WorldResetManager;
 import org.sobadfish.hunger.room.GameRoom;
-import org.sobadfish.hunger.room.config.GameRoomConfig;
 import org.sobadfish.hunger.room.config.WorldInfoConfig;
 
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -101,23 +102,15 @@ public class PluginMasterRunnable extends ThreadManager.AbstractBedWarRunnable {
             Server.getInstance().getScheduler().scheduleAsyncTask(TotalManager.getPlugin(), new AsyncTask() {
                 @Override
                 public void onRun() {
-                    List<GameRoomConfig> bufferQueue = new ArrayList<>();
                     try {
-                        for(Map.Entry<GameRoomConfig,String> map: WorldResetManager.RESET_QUEUE.entrySet()){
-                            if (WorldInfoConfig.toPathWorld(map.getKey().getName(), map.getValue())) {
-                                TotalManager.sendMessageToConsole("&a" + map.getKey().getName() + " 地图已还原");
+                        for(Map.Entry<String,String> map: WorldResetManager.RESET_QUEUE.entrySet()){
+                            if (WorldInfoConfig.toPathWorld(map.getKey(), map.getValue())) {
+                                TotalManager.sendMessageToConsole("&a" + map.getKey() + " 地图已还原");
                             }
-                            Server.getInstance().loadLevel(map.getValue());
-                            TotalManager.sendMessageToConsole("&r释放房间 " + map.getKey().getName());
-                            TotalManager.sendMessageToConsole("&r房间 " + map.getKey().getName() + " 已回收");
-                            bufferQueue.add(map.getKey());
+                            Server.getInstance().getPluginManager().callEvent(new ReloadWorldEvent(TotalManager.getPlugin(), TotalManager.getRoomManager().getRoomConfig(map.getKey())));
+
                         }
-                        //TODO 从列表中移除
-                        for(GameRoomConfig config: bufferQueue){
-                            TotalManager.getRoomManager().getRooms().remove(config.getName());
-                            RoomManager.LOCK_GAME.remove(config);
-                            WorldResetManager.RESET_QUEUE.remove(config);
-                        }
+
                     } catch (Exception e) {
                         TotalManager.sendMessageToConsole("&c释放房间出现了一个小问题，导致无法正常释放,已将这个房间暂时锁定");
                     }
