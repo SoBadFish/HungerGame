@@ -8,6 +8,8 @@ import org.sobadfish.hunger.manager.data.PlayerDataManager;
 import org.sobadfish.hunger.manager.data.PlayerTopManager;
 import org.sobadfish.hunger.panel.lib.AbstractFakeInventory;
 import org.sobadfish.hunger.room.config.GameRoomConfig;
+import org.sobadfish.hunger.variable.GameNpcVariable;
+import org.sobadfish.hunger.variable.GameTipVariable;
 
 import java.io.File;
 
@@ -18,9 +20,10 @@ import java.io.File;
  */
 public class TotalManager {
 
+    public static final String COMMAND_NAME = "hg";
     public static PluginBase plugin = null;
 
-    public static final String GAME_NAME = "GameDemo";
+    public static final String GAME_NAME = "HungerGame";
 
 
     private static PlayerDataManager dataManager;
@@ -34,7 +37,19 @@ public class TotalManager {
         TotalManager.plugin = pluginBase;
         checkServer();
         loadConfig();
+        loadVariable();
         ThreadManager.init();
+    }
+
+    private static void loadVariable() {
+        try{
+            Class.forName("com.smallaswater.npc.variable.BaseVariableV2");
+            GameNpcVariable.init();
+        }catch (Exception ignore){}
+        try{
+            Class.forName("tip.utils.variables.BaseVariable");
+            GameTipVariable.init();
+        }catch (Exception ignore){}
     }
 
 
@@ -69,7 +84,7 @@ public class TotalManager {
     }
 
     public static String getScoreBoardTitle(){
-        return TextFormat.colorize('&', plugin.getConfig().getString("scoreboard-title","&f[&a迷你战墙&f]"));
+        return TextFormat.colorize('&', plugin.getConfig().getString("scoreboard-title","&f[&a饥饿游戏&f]"));
     }
 
     public static void sendTipMessageToObject(String msg,Object o){
